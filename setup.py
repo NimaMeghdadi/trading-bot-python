@@ -23,7 +23,6 @@ ydata = []
 def update_graph():
     ax.plot(xdata, ydata, color='g')
     ax.legend([f"Last price: {ydata[-1]}$"])
-    print("update garph")
 
     fig.canvas.draw()
     plt.pause(0.1)
@@ -31,24 +30,37 @@ def update_graph():
 
 async def main():
     global loop
-
+    url = "wss://stream.binance.com:9443/stream?streams=btcusdt@miniTicker"
     # callback function that receives messages from the socket
     async def handle_evt(msg):
-        if msg['topic'] == '/market/ticker:ETH-USDT':
-            price :float = {msg["data"]["price"]}
-            pricetime :int = {msg["data"]["time"]}
+        if msg['topic'] == '/market/ticker:BTC-USDT':
+            price  = msg["data"]["price"]
 
             event_time = time.localtime()
             event_time = f"{event_time.tm_hour}:{event_time.tm_min}:{event_time.tm_sec}"
 
-            print(event_time, price)
+            print("kucoin",event_time, price)
 
             xdata.append(event_time)
-            print("update garph")
             ydata.append(int(float(price)))
+            update_graph()
+
+
+        async with websockets.connect(url) as client:
+            data = json.loads(await client.recv())['data']
+
+            event_time = time.localtime(data['E'] // 1000)
+            event_time = f"{event_time.tm_hour}:{event_time.tm_min}:{event_time.tm_sec}"
+
+            print("binance",event_time, data['c'])
+
+            xdata.append(event_time)
+            ydata.append(int(float(data['c'])))
 
             update_graph()
-            
+
+
+
 
 
 
@@ -61,7 +73,7 @@ async def main():
 
     # ETH-USDT Market Ticker
     
-    await ksm.subscribe('/market/ticker:ETH-USDT')
+    await ksm.subscribe('/market/ticker:BTC-USDT')
 
 
     while True:
