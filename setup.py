@@ -1,7 +1,7 @@
 import asyncio
 from kucoin.client import Client
 from kucoin.asyncio import KucoinSocketManager
-
+from sqlalchemy import true
 import websockets
 import asyncio
 import json
@@ -18,10 +18,14 @@ fig.show()
 
 xdata = []
 ydata = []
+x1data = []
+y1data = []
 
 
 def update_graph():
     ax.plot(xdata, ydata, color='g')
+    ax.plot(xdata, y1data, color='r')
+    
     ax.legend([f"Last price: {ydata[-1]}$"])
 
     fig.canvas.draw()
@@ -31,22 +35,24 @@ def update_graph():
 async def main():
     global loop
     url = "wss://stream.binance.com:9443/stream?streams=btcusdt@miniTicker"
-    # callback function that receives messages from the socket
+    
     async def handle_evt(msg):
+        #kucoin
         if msg['topic'] == '/market/ticker:BTC-USDT':
             price  = msg["data"]["price"]
+            timekucoin = msg["data"]["time"]
 
             event_time = time.localtime()
             event_time = f"{event_time.tm_hour}:{event_time.tm_min}:{event_time.tm_sec}"
 
             print("kucoin",event_time, price)
 
-            xdata.append(event_time)
-            ydata.append(int(float(price)))
-            update_graph()
-
-
-        async with websockets.connect(url) as client:
+            # xdata.append(event_time)
+            # ydata.append(int(float(price)))
+#            update_graph()
+        #binance
+    async with websockets.connect(url) as client:
+        while true :
             data = json.loads(await client.recv())['data']
 
             event_time = time.localtime(data['E'] // 1000)
@@ -54,15 +60,10 @@ async def main():
 
             print("binance",event_time, data['c'])
 
-            xdata.append(event_time)
-            ydata.append(int(float(data['c'])))
+            # x1data.append(event_time)
+            # y1data.append(int(float(data['c'])))
 
-            update_graph()
-
-
-
-
-
+            # update_graph()
 
     client = Client(api_key, api_secret, api_passphrase)
 
@@ -72,8 +73,8 @@ async def main():
     ksm_private = await KucoinSocketManager.create(loop, client, handle_evt, private=True)
 
     # ETH-USDT Market Ticker
-    
     await ksm.subscribe('/market/ticker:BTC-USDT')
+    
 
 
     while True:
