@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     # create websocket threads
     binance = Binance(
-        url="wss://stream.binance.com:9443/ws/steembtc@depth",
+        url="wss://stream.binance.com:9443/ws/btcusdt@ticker",
         exchange="Binance",
         orderbook=orderbooks,
         lock=lock,
@@ -56,10 +56,9 @@ if __name__ == "__main__":
         lock=lock,
     )
 
-
     # start threads
     binance.start()
-    huobi.start()
+    # huobi.start()
 
     # process websocket data
     run(orderbooks, lock)

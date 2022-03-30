@@ -18,10 +18,10 @@ class Binance(Client):
     # convert message to dict, process update
     def on_message(self, message):
         data = loads(message)
+        print(data['c'])
 
         # check for orderbook, if empty retrieve
         if len(self.orderbook) == 0:
-            print(key + "calue "+value)
             for key, value in self.get_snapshot().items():
                 self.orderbook[key] = value
 
@@ -51,32 +51,8 @@ class Binance(Client):
             self.last_update['last_update'] = datetime.now()
 
     # Update orderbook, differentiate between remove, update and new
-    def manage_orderbook(self, side, update):
-        # extract values
-        price, qty = update
-
-        # loop through orderbook side
-        for x in range(0, len(self.orderbook[side])):
-            if price == self.orderbook[side][x][0]:
-                # when qty is 0 remove from orderbook, else
-                # update values
-                if qty == 0:
-                    del self.orderbook[side]
-                    break
-                else:
-                    self.orderbook[side][x] = update
-                    break
-            # if the price level is not in the orderbook, 
-            # insert price level, filter for qty 0
-            elif ((price > self.orderbook[side][x][0] and side == 'bids') or
-                    (price < self.orderbook[side][x][0] and side == 'asks')):
-                if qty != 0:
-                    self.orderbook[side].insert(x, update)
-                    break
-                else:
-                    break
 
     # retrieve orderbook snapshot
     def get_snapshot(self):
-        r = requests.get('https://www.binance.com/api/v1/depth?symbol=STEEMBTC&limit=1000')
+        r = requests.get('https://www.binance.com/api/v1/ticker?symbol=BTCUSDT&limit=1000')
         return loads(r.content.decode())
