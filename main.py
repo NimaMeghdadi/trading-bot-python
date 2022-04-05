@@ -20,9 +20,17 @@ def run(orderbooks, lock):
                     # extract and print data
                     for key, value in orderbooks.items():
                         if key != 'last_update':
-                            bid = value['bids'][0][0]
-                            ask = value['asks'][0][0]
+                            # print(f"key: {key} value {value} ")
+                            if key == "Binance":
+                                print("binance")
+                                bid = value
+                                ask = value 
+                            else:
+                                print("a")
+                                bid = value['bids'][0][0]
+                                ask = value['asks'][0][0]
                             print(f"{key} bid: {bid} ask: {ask}")
+                            
                     print()
 
                     # set local last_update to last_update
@@ -58,7 +66,7 @@ if __name__ == "__main__":
 
     # start threads
     binance.start()
-    # huobi.start()
+    huobi.start()
 
     # process websocket data
     run(orderbooks, lock)

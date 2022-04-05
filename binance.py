@@ -18,12 +18,24 @@ class Binance(Client):
     # convert message to dict, process update
     def on_message(self, message):
         data = loads(message)
-        print(data['c'])
 
         # check for orderbook, if empty retrieve
-        if len(self.orderbook) == 0:
-            for key, value in self.get_snapshot().items():
-                self.orderbook[key] = value
+        # print(f" price : {data['c']}")
+
+        # self.orderbook['bids'] = data['c']
+        # self.orderbook[key] = data['c']
+        # print(f"price {data['c']}")
+        # print(self.get_snapshot().items())
+
+        # print(f"key: {key} value: {value}")
+        key = "binance"
+        value = data['c']
+        self.orderbook[key] = value
+        
+        # if len(self.orderbook) == 0:
+        #     for key, value in self.get_snapshot().items():
+        #         self.orderbook[key] = value
+        #         print(self.get_snapshot().items())
 
         # get lastUpdateId
         lastUpdateId = self.orderbook['lastUpdateId']
@@ -44,9 +56,9 @@ class Binance(Client):
     # Loop through all bid and ask updates, call manage_orderbook accordingly
     def process_updates(self, data):
         with self.lock:
-            for update in data['b']:
+            for update in data['c']:
                 self.manage_orderbook('bids', update)
-            for update in data['a']:
+            for update in data['c']:
                 self.manage_orderbook('asks', update)
             self.last_update['last_update'] = datetime.now()
 
