@@ -22,11 +22,9 @@ def run(orderbooks, lock):
                         if key != 'last_update':
                             # print(f"key: {key} value {value} ")
                             if key == "Binance":
-                                print("binance")
-                                bid = value
-                                ask = value 
+                                bid = value['binance']
+                                ask = value['binance']
                             else:
-                                print("a")
                                 bid = value['bids'][0][0]
                                 ask = value['asks'][0][0]
                             print(f"{key} bid: {bid} ask: {ask}")
