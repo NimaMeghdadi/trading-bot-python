@@ -25,10 +25,9 @@ def run(orderbooks, lock):
                                 bid = value['binance']
                                 ask = value['binance']
                             else:
-                                bid = value['bids'][0][0]
-                                ask = value['asks'][0][0]
+                                bid = value['bids']
+                                ask = value['asks']
                             print(f"{key} bid: {bid} ask: {ask}")
-                            
                     print()
 
                     # set local last_update to last_update

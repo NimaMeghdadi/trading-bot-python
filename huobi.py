@@ -23,8 +23,8 @@ class Huobi(Client):
         # extract bids/aks
         if 'tick' in data:
             with self.lock:
-                self.orderbook['bids'] = data['tick']['bids']
-                self.orderbook['asks'] = data['tick']['asks']
+                self.orderbook['bids'] = data['tick']['open']
+                self.orderbook['asks'] = data['tick']['open']
                 self.last_update['last_update'] = datetime.now()
 
         # respond to ping message
@@ -35,5 +35,5 @@ class Huobi(Client):
     # convert dict to string, subscribe to data streem by sending message
     def on_open(self):
         super().on_open()
-        params = {"sub": "market.steembtc.depth.step0", "id": "id1"}
+        params = {"sub": "market.btcusdt.ticker"}
         self.ws.send(dumps(params))
