@@ -23,11 +23,9 @@ def run(orderbooks, lock):
                             # print(f"key: {key} value {value} ")
                             if key == "Binance":
                                 bid = value['binance']
-                                ask = value['binance']
                             else:
                                 bid = value['bids']
-                                ask = value['asks']
-                            print(f"{key} bid: {bid} ask: {ask}")
+                            print(f"{key} bid: {bid}")
                     print()
 
                     # set local last_update to last_update

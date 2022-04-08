@@ -41,7 +41,6 @@ class Binance(Client):
         lastUpdateId = self.orderbook['lastUpdateId']
 
         # drop any updates older than the snapshot
-        print(f"u: {data['u']}")
         if self.updates == 0:
             if data['U'] <= lastUpdateId+1 and data['u'] >= lastUpdateId+1:
                 self.orderbook['lastUpdateId'] = data['u']

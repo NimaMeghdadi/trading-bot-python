@@ -23,8 +23,7 @@ class Huobi(Client):
         # extract bids/aks
         if 'tick' in data:
             with self.lock:
-                self.orderbook['bids'] = data['tick']['open']
-                self.orderbook['asks'] = data['tick']['open']
+                self.orderbook['bids'] = data['tick']['lastPrice']
                 self.last_update['last_update'] = datetime.now()
 
         # respond to ping message
