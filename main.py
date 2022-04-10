@@ -1,11 +1,19 @@
 from binance import Binance
 from huobi import Huobi
+from kucoin import Kucoin
 from datetime import datetime
 
+import datetime as dt
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import threading
 import time
 
-
+# Create figure for plotting
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+xs = []
+ys = []
 # print top bid/ask for each exchange
 # run forever
 def run(orderbooks, lock):
@@ -21,11 +29,8 @@ def run(orderbooks, lock):
                     for key, value in orderbooks.items():
                         if key != 'last_update':
                             # print(f"key: {key} value {value} ")
-                            if key == "Binance":
-                                bid = value['binance']
-                            else:
-                                bid = value['bids']
-                            print(f"{key} bid: {bid}")
+                            price = value[key]
+                        print(f"{key} price: {price}")
                     print()
 
                     # set local last_update to last_update
@@ -34,6 +39,27 @@ def run(orderbooks, lock):
         except Exception:
             pass
 
+def animate(i, xs, ys):
+    # Read temperature (Celsius) from TMP102
+    temp_c = round(value[key], 2)
+    # Add x and y to lists
+    xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
+    ys.append(temp_c)
+    # Limit x and y lists to 20 items
+    xs = xs[-20:]
+    ys = ys[-20:]
+    # Draw x and y lists
+    ax.clear()
+    ax.plot(xs, ys)
+    # Format plot
+    plt.xticks(rotation=45, ha='right')
+    plt.subplots_adjust(bottom=0.30)
+    plt.title('TMP102 Temperature over Time')
+    plt.ylabel('Temperature (deg C)')
+# Set up plot to call animate() function periodically
+ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
+plt.show()
+
 
 if __name__ == "__main__":
     # data management
@@ -41,6 +67,7 @@ if __name__ == "__main__":
     orderbooks = {
         "Binance": {},
         "Huobi": {},
+        "Kucoin": {},
         "last_update": None,
     }
 
@@ -58,10 +85,18 @@ if __name__ == "__main__":
         orderbook=orderbooks,
         lock=lock,
     )
+    
+    kucoin = Kucoin(
+        url="wss://ws-api.kucoin.com/endpoint",
+        exchange="Kucoin",
+        orderbook=orderbooks,
+        lock=lock,
+    )
 
     # start threads
     binance.start()
     huobi.start()
+    # kucoin.start()
 
     # process websocket data
     run(orderbooks, lock)

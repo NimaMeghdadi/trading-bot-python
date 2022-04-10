@@ -28,7 +28,7 @@ class Binance(Client):
         # print(self.get_snapshot().items())
 
         # print(f"key: {key} value: {value}")
-        key = "binance"
+        key = "Binance"
         value = data['c']
         self.orderbook[key] = value
         
@@ -38,29 +38,29 @@ class Binance(Client):
         #         print(self.get_snapshot().items())
 
         # get lastUpdateId
-        lastUpdateId = self.orderbook['lastUpdateId']
+    #     lastUpdateId = self.orderbook['lastUpdateId']
 
-        # drop any updates older than the snapshot
-        if self.updates == 0:
-            if data['U'] <= lastUpdateId+1 and data['u'] >= lastUpdateId+1:
-                self.orderbook['lastUpdateId'] = data['u']
-                self.process_updates(data)
+    #     # drop any updates older than the snapshot
+    #     if self.updates == 0:
+    #         if data['U'] <= lastUpdateId+1 and data['u'] >= lastUpdateId+1:
+    #             self.orderbook['lastUpdateId'] = data['u']
+    #             self.process_updates(data)
 
-        # check if update still in sync with orderbook
-        elif data['U'] == lastUpdateId+1:
-            self.orderbook['lastUpdateId'] = data['u']
-            self.process_updates(data)
-        else:
-            print('Out of sync, abort')
+    #     # check if update still in sync with orderbook
+    #     elif data['U'] == lastUpdateId+1:
+    #         self.orderbook['lastUpdateId'] = data['u']
+    #         self.process_updates(data)
+    #     else:
+    #         print('Out of sync, abort')
 
-    # Loop through all bid and ask updates, call manage_orderbook accordingly
-    def process_updates(self, data):
-        with self.lock:
-            for update in data['a']:
-                self.manage_orderbook('bids', update)
-            for update in data['a']:
-                self.manage_orderbook('asks', update)
-            self.last_update['last_update'] = datetime.now()
+    # # Loop through all bid and ask updates, call manage_orderbook accordingly
+    # def process_updates(self, data):
+    #     with self.lock:
+    #         # for update in data['a']:
+    #         #     self.manage_orderbook('bids', update)
+    #         # for update in data['a']:
+    #         #     self.manage_orderbook('asks', update)
+    #         self.last_update['last_update'] = datetime.now()
 
     # Update orderbook, differentiate between remove, update and new
 

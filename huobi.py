@@ -19,11 +19,10 @@ class Huobi(Client):
     # convert message to dict, decode, extract top ask/bid
     def on_message(self, message):
         data = loads(gzip.decompress(message).decode('utf-8'))
-        
         # extract bids/aks
         if 'tick' in data:
             with self.lock:
-                self.orderbook['bids'] = data['tick']['lastPrice']
+                self.orderbook['Huobi'] = data['tick']['lastPrice']
                 self.last_update['last_update'] = datetime.now()
 
         # respond to ping message
