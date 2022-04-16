@@ -28,6 +28,7 @@ class Binance(Client):
         # print(self.get_snapshot().items())
 
         # print(f"key: {key} value: {value}")
+        
         key = "Binance"
         value = data['c']
         self.orderbook[key] = value

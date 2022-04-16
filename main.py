@@ -14,7 +14,6 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 xs = []
 ys = []
-# print top bid/ask for each exchange
 # run forever
 def run(orderbooks, lock):
     # local last_update
@@ -25,13 +24,22 @@ def run(orderbooks, lock):
             # check for new update
             if orderbooks['last_update'] != current_time:
                 with lock:
-                    # extract and print data
+                    i = 2
                     for key, value in orderbooks.items():
-                        if key != 'last_update':
-                            # print(f"key: {key} value {value} ")
-                            price = value[key]
-                        print(f"{key} price: {price}")
+                        i-=1
+                        price = value[key]
+                        print(f"{key} price: {price} wtf")
+                        
+                        if i == 0:
+                            break
+                        ani = animation.FuncAnimation(price , fig, animate, fargs=(xs, ys))
+                        
+                        # price = round(price, 2)
+                        # Add x and y to lists
+                    # plt.show()
                     print()
+                    time.sleep(0.1)
+                    plt.show()
 
                     # set local last_update to last_update
                     current_time = orderbooks['last_update']
@@ -39,9 +47,10 @@ def run(orderbooks, lock):
         except Exception:
             pass
 
-def animate(i, xs, ys):
+def animate(price , xs, ys):
     # Read temperature (Celsius) from TMP102
-    temp_c = round(value[key], 2)
+    print(orderbooks.items())
+    temp_c = round(price, 2)
     # Add x and y to lists
     xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
     ys.append(temp_c)
@@ -57,8 +66,7 @@ def animate(i, xs, ys):
     plt.title('TMP102 Temperature over Time')
     plt.ylabel('Temperature (deg C)')
 # Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys), interval=1000)
-plt.show()
+# plt.show()
 
 
 if __name__ == "__main__":
