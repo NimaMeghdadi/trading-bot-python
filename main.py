@@ -8,13 +8,12 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import threading
 import time
+# from pylive import live_plotter
+import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Create figure for plotting
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-xs = []
-ys = []
-# run forever
 def run(orderbooks, lock):
     # local last_update
     current_time = datetime.now()
@@ -25,21 +24,17 @@ def run(orderbooks, lock):
             if orderbooks['last_update'] != current_time:
                 with lock:
                     i = 2
+                    # print("i =" + i)
                     for key, value in orderbooks.items():
-                        i-=1
-                        price = value[key]
-                        print(f"{key} price: {price} wtf")
                         
+                        i= i-1
+                        price = value[key]
+                        print(f"{key} price: {price} i={i}")
                         if i == 0:
                             break
-                        ani = animation.FuncAnimation(price , fig, animate, fargs=(xs, ys))
-                        
-                        # price = round(price, 2)
-                        # Add x and y to lists
-                    # plt.show()
                     print()
                     time.sleep(0.1)
-                    plt.show()
+                    # plt.show()
 
                     # set local last_update to last_update
                     current_time = orderbooks['last_update']
@@ -47,26 +42,7 @@ def run(orderbooks, lock):
         except Exception:
             pass
 
-def animate(price , xs, ys):
-    # Read temperature (Celsius) from TMP102
-    print(orderbooks.items())
-    temp_c = round(price, 2)
-    # Add x and y to lists
-    xs.append(dt.datetime.now().strftime('%H:%M:%S.%f'))
-    ys.append(temp_c)
-    # Limit x and y lists to 20 items
-    xs = xs[-20:]
-    ys = ys[-20:]
-    # Draw x and y lists
-    ax.clear()
-    ax.plot(xs, ys)
-    # Format plot
-    plt.xticks(rotation=45, ha='right')
-    plt.subplots_adjust(bottom=0.30)
-    plt.title('TMP102 Temperature over Time')
-    plt.ylabel('Temperature (deg C)')
-# Set up plot to call animate() function periodically
-# plt.show()
+
 
 
 if __name__ == "__main__":
